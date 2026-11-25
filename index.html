@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>वॉयंट ट्रेंड्स | शब्द आवृत्ति विश्लेषण</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<style>
+:root{--ink:#17243b;--muted:#64748b;--line:#dce4ef;--bg:#f4f7fb;--blue:#2856d8;--teal:#0f9b8e;--purple:#805ad5;--orange:#e58b32}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,"Noto Sans Devanagari","Mangal",system-ui,sans-serif}
+header{background:linear-gradient(120deg,#14264b,#2856d8);color:#fff;padding:24px max(20px,calc((100% - 1180px)/2));}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:14px;background:#ffffff20;display:grid;place-items:center;font-size:25px}.brand h1{font-size:25px;margin:0}.brand p{margin:4px 0 0;color:#dbe6ff;font-size:13px}.pill{border:1px solid #ffffff55;border-radius:999px;padding:8px 12px;font-size:12px;color:#eff5ff}
+.language-switch{display:flex;align-items:center;gap:9px;border:1px solid #ffffff55;border-radius:999px;padding:7px 11px;background:#ffffff12;color:#fff}
+.lang-label{font-size:12px;font-weight:700;min-width:22px;text-align:center;color:#dbe6ff}
+.lang-label.active{color:#fff}
+.switch{width:42px;height:24px;border:0;border-radius:999px;background:#b9c9ed;padding:3px;cursor:pointer;position:relative;transition:background .2s}
+.switch-knob{display:block;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0003;transform:translateX(0);transition:transform .2s}
+.switch[aria-checked="true"]{background:#55d6b0}
+.switch[aria-checked="true"] .switch-knob{transform:translateX(18px)}
+main{max-width:1180px;margin:24px auto;padding:0 18px 36px}.intro{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px;flex-wrap:wrap}.intro h2{font-size:23px;margin:0 0 6px}.intro p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}.status{background:#e4f7ef;color:#08795c;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:18px}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:20px;box-shadow:0 5px 18px #17243b08}.card h3{font-size:16px;margin:0 0 14px}.step{font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+textarea{width:100%;min-height:180px;resize:vertical;border:1px solid var(--line);border-radius:11px;padding:12px;font:14px/1.6 inherit;color:var(--ink);outline:none}textarea:focus,input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2856d81c}
+input[type=file]{width:100%;font-size:12px;color:var(--muted);margin:9px 0 5px}.hint{font-size:11px;color:var(--muted);line-height:1.5;margin:6px 0 12px}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.btn{border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer;font-size:13px}.btn:hover{filter:brightness(.95)}.btn.secondary{background:#edf2ff;color:#2446a5}.btn.ghost{background:#f1f5f9;color:#334155}.btn:disabled{opacity:.5;cursor:not-allowed}.full{width:100%;margin-top:9px}.field-label{font-size:12px;font-weight:700;display:block;margin:12px 0 7px}input[type=text],select{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;font:inherit;font-size:13px;background:white}
+.term-entry{display:flex;gap:8px}.term-entry input{flex:1}.translate-panel{margin-top:16px;padding:13px;border:1px solid #dce4ef;border-radius:12px;background:#fbfcff}.translate-panel h4{margin:0 0 8px;font-size:13px}.translate-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}.translate-output{width:100%;min-height:105px;margin-top:10px;border:1px solid var(--line);border-radius:9px;padding:10px;font:13px/1.6 inherit;resize:vertical}.translate-help{font-size:11px;color:var(--muted);line-height:1.5;margin:8px 0 0}.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.chip{display:flex;align-items:center;gap:6px;background:#eef3ff;color:#2947a3;padding:7px 9px;border-radius:999px;font-size:12px}.chip button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:15px;padding:0}.small-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.chart-head{display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap}.chart-head p{font-size:12px;color:var(--muted);margin:4px 0 0}.chart-wrap{height:345px;position:relative;margin-top:18px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px}.metric span{font-size:11px;color:var(--muted)}.metric strong{display:block;font-size:22px;margin-top:5px}.below{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.info-list{margin:0;padding-left:18px;color:#526176;font-size:13px;line-height:1.8}.notice{font-size:12px;color:var(--muted);line-height:1.6;background:#f8fafc;border-radius:10px;padding:11px;margin-top:12px}.message{font-size:12px;margin-top:9px;min-height:18px;color:#b45309}.footer{text-align:center;font-size:11px;color:#8490a3;padding:18px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.below{grid-template-columns:1fr}.chart-wrap{height:300px}}@media(max-width:500px){header{padding:20px}.brand h1{font-size:20px}.metrics{grid-template-columns:1fr}.intro h2{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div class="top">
+ <div class="brand"><div class="logo">〽</div><div><h1 data-i18n="brand">वॉयंट ट्रेंड्स</h1><p data-i18n="brandSub">पाठ में शब्दों की आवृत्ति का दृश्य विश्लेषण</p></div></div>
+ <div class="language-switch" aria-label="Interface language">
+      <span class="lang-label active" id="langLabelHi">हिंदी</span>
+      <button id="languageToggle" class="switch" type="button" role="switch" aria-checked="false" aria-label="Switch interface language" title="हिंदी / English"><span class="switch-knob"></span></button>
+      <span class="lang-label" id="langLabelEn">EN</span>
+    </div>
+</div></header>
+<main>
+ <section class="intro"><div><h2 data-i18n="heroTitle">शब्दों के बदलते पैटर्न खोजें</h2><p data-i18n="heroSub">पाठ पेस्ट करें या फ़ाइल अपलोड करें, शब्द चुनें और अनुभागों के अनुसार उनका ट्रेंड देखें।</p></div><div class="status" id="statusBadge">● उदाहरण डेटा लोड है</div></section>
+ <div class="grid">
+  <section class="card">
+   <div class="step" data-i18n="step1">चरण 1 · इनपुट</div><h3 data-i18n="enterText">पाठ दर्ज करें</h3>
+   <textarea id="sourceText" aria-label="पाठ दर्ज करें" placeholder="यहाँ अपना शोध-पत्र या कोई पाठ पेस्ट करें..." data-i18n-placeholder="textPlaceholder"></textarea>
+   <label class="field-label" for="fileInput" data-i18n="uploadLabel">या फ़ाइल अपलोड करें</label>
+   <input id="fileInput" type="file" accept=".txt,.pdf,.docx,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+   <p class="hint" data-i18n="fileHint">समर्थित फ़ाइलें: TXT, PDF और DOCX। PDF में चयन योग्य टेक्स्ट होना चाहिए; स्कैन किए गए PDF के लिए OCR आवश्यक हो सकता है।</p>
+<button class="btn full" id="analyzeBtn" data-i18n="analyze">पाठ का विश्लेषण करें</button>
+   <div class="message" id="message" role="status"></div>
+   <div class="step" style="margin-top:22px" data-i18n="step2">चरण 2 · शब्द चुनें</div><h3 data-i18n="trackTerms">ट्रैक करने वाले शब्द</h3>
+   <div class="term-entry"><input id="termInput" type="text" placeholder="जैसे: privacy" data-i18n-placeholder="termPlaceholder"><button class="btn" id="addTermBtn" data-i18n="add">जोड़ें</button></div>
+   <div class="chips" id="termChips"></div>
+   <div class="small-actions"><button class="btn secondary" id="suggestBtn" data-i18n="suggest">मुख्य शब्द सुझाएँ</button><button class="btn ghost" id="resetBtn" data-i18n="reset">डेमो रीसेट करें</button></div>
+   <label class="field-label" for="metricSelect" data-i18n="metricLabel">ग्राफ़ में माप</label>
+   <select id="metricSelect"><option value="relative" data-i18n="relativeMetric">सामान्यीकृत आवृत्ति (प्रति 1,000 शब्द)</option><option value="raw" data-i18n="rawMetric">कुल occurrences (raw count)</option></select>
+   <div class="notice">यह एक शैक्षणिक डेमो है। फ़ाइलें ब्राउज़र में पढ़ी जाती हैं; इस पेज में कोई सर्वर या डेटाबेस नहीं है।</div>
+  </section>
+  <section class="card">
+   <div class="chart-head"><div><div class="step" data-i18n="results">परिणाम · ट्रेंड्स</div><h3 style="margin-bottom:0" data-i18n="chartTitle">अनुभाग के अनुसार शब्द आवृत्ति</h3><p id="chartSubtitle">डेमो शोध-पाठ · 8 अनुभाग</p></div><button class="btn secondary" id="downloadBtn" data-i18n="csv">चार्ट डेटा CSV</button></div>
+   <div class="chart-wrap"><canvas id="trendChart" aria-label="शब्द आवृत्ति ट्रेंड्स चार्ट"></canvas></div>
+   <div class="metrics"><div class="metric"><span>शब्दों की कुल संख्या</span><strong id="wordCount">0</strong></div><div class="metric"><span>अनुभाग</span><strong id="sectionCount">0</strong></div><div class="metric"><span>ट्रैक किए गए शब्द</span><strong id="termCount">0</strong></div></div>
+   <div class="notice"><b data-i18n="howRead">ग्राफ़ कैसे पढ़ें?</b> <span data-i18n="howReadText">X-अक्ष दस्तावेज़ के अनुभाग दिखाता है। Y-अक्ष चुने गए माप के अनुसार आवृत्ति दिखाता है। किसी बिंदु पर माउस ले जाने से उसका मान दिखाई देता है। लेजेंड पर क्लिक करके किसी शब्द की लाइन छिपा/दिखा सकते हैं।</span></div>
+  </section>
+ </div>
+ <div class="below">
+  <section class="card"><h3 data-i18n="whatDemo">यह डेमो क्या करता है?</h3><ul class="info-list"><li>टेक्स्ट को लगभग समान आकार के अनुभागों में बाँटता है।</li><li>चुने गए शब्दों की प्रत्येक अनुभाग में गिनती करता है।</li><li>लंबे और छोटे अनुभागों की तुलना के लिए सामान्यीकृत आवृत्ति देता है।</li><li>शब्द जोड़ने/हटाने पर चार्ट अपडेट करता है।</li></ul></section>
+  <section class="card"><h3 data-i18n="limitations">महत्वपूर्ण सीमा</h3><ul class="info-list"><li>यह Voyant Trends से प्रेरित स्वतंत्र प्रोटोटाइप है, आधिकारिक Voyant सेवा नहीं।</li><li>अनुभाग विभाजन और tokenization Voyant से अलग परिणाम दे सकते हैं।</li><li>स्कैन किए गए PDF से टेक्स्ट निकालने के लिए OCR शामिल नहीं है।</li></ul></section>
+ </div>
+ <div class="footer" data-i18n="footer">शैक्षणिक प्रस्तुति हेतु बनाया गया डेमो · Voyant Tools से प्रेरित, स्वतंत्र कार्यान्वयन</div>
+</main>
+<script>
+if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}
+const demoText = `Information security and privacy concerns have become important topics in digital research. Privacy describes a person's ability to control personal information. Security focuses on protecting information from unauthorized access.
+Researchers study privacy concerns because people share information through websites, mobile applications, and online services. Information security methods help protect data, while privacy policies explain how personal information may be collected and used.
+The growth of digital services creates new security challenges. Organizations need clear privacy practices and reliable security systems. Users may lose trust when information is exposed or when organizations do not explain their data practices.
+Research on privacy and information security uses surveys, experiments, interviews, and textual analysis. Textual analysis can identify frequently used words and reveal how attention changes across sections of a collection.
+Privacy concerns may differ across industries and communities. Security research often discusses risks, threats, access control, and protection. Privacy research often discusses consent, personal data, transparency, and user control.
+Good information governance connects privacy and security. Organizations should limit data collection, protect stored information, explain policies clearly, and respond responsibly to incidents.
+Future research can compare documents over time to identify changing themes. Word frequency is a useful starting point, but it does not explain meaning by itself. Researchers should interpret trends in context.
+This demonstration uses a small sample text to show how the frequency of privacy, security, and information changes across sections. It is an educational example, not a conclusion about the whole research field.`;
+let terms=['privacy','security','information'];
+let chart=null, currentSections=[], currentText=demoText;
+const colors=['#2856d8','#0f9b8e','#805ad5','#e58b32','#db5277','#64748b'];
+const $=id=>document.getElementById(id);
+function tokenize(s){return (s.toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu)||[]);}
+function makeSections(text,n=8){
+ const words=text.trim().split(/\s+/).filter(Boolean);
+ if(!words.length)return [];
+ const target=Math.max(1,Math.ceil(words.length/n)), sections=[];
+ for(let i=0;i<words.length;i+=target)sections.push(words.slice(i,i+target).join(' '));
+ return sections;
+}
+function frequency(section,term){const a=tokenize(section),t=tokenize(term);if(t.length!==1)return 0;return a.filter(w=>w===t[0]).length;}
+function calculate(){
+ const sections=makeSections(currentText,8);currentSections=sections;
+ const labels=sections.map((_,i)=>`${(typeof uiLanguage!=='undefined'&&uiLanguage==='en')?'Section':'अनुभाग'} ${i+1}`);
+ const datasets=terms.map((term,i)=>({label:term,data:sections.map(s=>{const raw=frequency(s,term);return $('metricSelect').value==='raw'?raw:(tokenize(s).length?raw/tokenize(s).length*1000:0)}),borderColor:colors[i%colors.length],backgroundColor:colors[i%colors.length],borderWidth:2.5,pointRadius:3,pointHoverRadius:6,tension:.28,fill:false}));
+ if(chart)chart.destroy();
+ chart=new Chart($('trendChart'),{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,padding:18,font:{family:'system-ui',size:12}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y.toFixed(2)}`}}},scales:{x:{title:{display:true,text:'दस्तावेज़ के अनुभाग'},grid:{display:false}},y:{beginAtZero:true,title:{display:true,text:$('metricSelect').value==='raw'?((typeof uiLanguage!=='undefined'&&uiLanguage==='en')?'Word count':'शब्दों की गिनती'):((typeof uiLanguage!=='undefined'&&uiLanguage==='en')?'Per 1,000 words':'प्रति 1,000 शब्द')},ticks:{maxTicksLimit:6}}}}});
+ const wc=tokenize(currentText).length;
+ $('wordCount').textContent=wc.toLocaleString('en-IN');$('sectionCount').textContent=sections.length;$('termCount').textContent=terms.length;
+ $('chartSubtitle').textContent=`${$('fileInput').files[0]?.name||'पाठ विश्लेषण'} · ${sections.length} अनुभाग`;
+ $('statusBadge').textContent=(typeof uiLanguage!=='undefined'&&uiLanguage==='en')?'● Analysis ready':'● विश्लेषण तैयार';renderChips();
+}
+function renderChips(){$('termChips').innerHTML='';terms.forEach(t=>{const span=document.createElement('span');span.className='chip';const label=document.createElement('span');label.textContent=t;const b=document.createElement('button');b.textContent='×';b.title=`${t} हटाएँ`;b.onclick=()=>{terms=terms.filter(x=>x!==t);calculate()};span.append(label,b);$('termChips').appendChild(span)});}
+function showMessage(s,good=false){$('message').textContent=s;$('message').style.color=good?'#08795c':'#b45309'}
+function analyze(){const text=$('sourceText').value.trim();if(!text){showMessage(UI_TRANSLATIONS[uiLanguage].needText);return}currentText=text;calculate();showMessage(UI_TRANSLATIONS[uiLanguage].analysisDone,true)}
+$('analyzeBtn').onclick=analyze;
+$('addTermBtn').onclick=()=>{const t=$('termInput').value.trim();if(!t)return;if(tokenize(t).length!==1){showMessage(UI_TRANSLATIONS[uiLanguage].oneWord);return}if(terms.some(x=>x.toLocaleLowerCase()===t.toLocaleLowerCase())){showMessage(UI_TRANSLATIONS[uiLanguage].duplicate);return}terms.push(t);$('termInput').value='';calculate();showMessage(`“${t}”${UI_TRANSLATIONS[uiLanguage].added}`,true)};
+$('termInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('addTermBtn').click()});
+$('metricSelect').onchange=calculate;
+$('suggestBtn').onclick=()=>{const counts=new Map();tokenize(currentText).forEach(w=>{if(w.length>3&&!['this','that','with','from','have','their','they','which','will','into','because','across','often','through','people','about','also','these','those','when','while','such','than','been','were','your','और','यह','है','के','की'].includes(w))counts.set(w,(counts.get(w)||0)+1)});const suggested=[...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>x[0]);terms=[...new Set([...terms,...suggested])].slice(0,6);calculate();showMessage(UI_TRANSLATIONS[uiLanguage].suggested,true)};
+$('resetBtn').onclick=()=>{$('sourceText').value=demoText;$('fileInput').value='';currentText=demoText;terms=['privacy','security','information'];calculate();showMessage(UI_TRANSLATIONS[uiLanguage].demoLoaded,true)};
+$('fileInput').addEventListener('change',async e=>{
+ const file=e.target.files[0];if(!file)return;showMessage(UI_TRANSLATIONS[uiLanguage].fileReading);
+ try{let text='';
+  if(file.name.toLowerCase().endsWith('.txt'))text=await file.text();
+  else if(file.name.toLowerCase().endsWith('.pdf')){
+   if(!window.pdfjsLib)throw new Error('PDF पढ़ने की लाइब्रेरी लोड नहीं हुई। इंटरनेट कनेक्शन जाँचें।');
+   const data=new Uint8Array(await file.arrayBuffer()),pdf=await pdfjsLib.getDocument({data}).promise;let pages=[];
+   for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),content=await page.getTextContent();pages.push(content.items.map(x=>x.str).join(' '))}
+   text=pages.join('\n');
+  }else if(file.name.toLowerCase().endsWith('.docx')){
+   if(!window.mammoth)throw new Error('DOCX पढ़ने की लाइब्रेरी लोड नहीं हुई। इंटरनेट कनेक्शन जाँचें।');
+   const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});text=result.value;
+  }else throw new Error('यह फ़ाइल फ़ॉर्मैट समर्थित नहीं है।');
+  if(!text.trim())throw new Error('इस फ़ाइल से टेक्स्ट नहीं मिला। PDF स्कैन किया हुआ हो सकता है।');
+  $('sourceText').value=text;currentText=text;calculate();showMessage(UI_TRANSLATIONS[uiLanguage].extracted,true);
+ }catch(err){showMessage(err.message||'फ़ाइल पढ़ने में समस्या हुई।')}
+});
+$('downloadBtn').onclick=()=>{
+ if(!currentSections.length)return;const rows=[['Section',...terms]];
+ currentSections.forEach((s,i)=>rows.push([`Section ${i+1}`,...terms.map(t=>{const raw=frequency(s,t);return $('metricSelect').value==='raw'?raw:(tokenize(s).length?raw/tokenize(s).length*1000:0).toFixed(3)})]));
+ const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+ const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voyant-trends-data.csv';a.click();URL.revokeObjectURL(url);
+};
+
+const UI_TRANSLATIONS = {
+ hi: {
+  brand:"वॉयंट ट्रेंड्स", brandSub:"पाठ में शब्दों की आवृत्ति का दृश्य विश्लेषण",
+  heroTitle:"शब्दों के बदलते पैटर्न खोजें", heroSub:"पाठ पेस्ट करें या फ़ाइल अपलोड करें, शब्द चुनें और अनुभागों के अनुसार उनका ट्रेंड देखें।",
+  step1:"चरण 1 · इनपुट", enterText:"पाठ दर्ज करें", textPlaceholder:"यहाँ अपना शोध-पत्र या कोई पाठ पेस्ट करें...",
+  uploadLabel:"या फ़ाइल अपलोड करें", fileHint:"समर्थित फ़ाइलें: TXT, PDF और DOCX। PDF में चयन योग्य टेक्स्ट होना चाहिए; स्कैन किए गए PDF के लिए OCR आवश्यक हो सकता है।",
+  analyze:"पाठ का विश्लेषण करें", step2:"चरण 2 · शब्द चुनें", trackTerms:"ट्रैक करने वाले शब्द", termPlaceholder:"जैसे: privacy", add:"जोड़ें",
+  suggest:"मुख्य शब्द सुझाएँ", reset:"डेमो रीसेट करें", metricLabel:"ग्राफ़ में माप",
+  relativeMetric:"सामान्यीकृत आवृत्ति (प्रति 1,000 शब्द)", rawMetric:"कुल occurrences (raw count)",
+  results:"परिणाम · ट्रेंड्स", chartTitle:"अनुभाग के अनुसार शब्द आवृत्ति", csv:"चार्ट डेटा CSV",
+  howRead:"ग्राफ़ कैसे पढ़ें?", howReadText:"X-अक्ष दस्तावेज़ के अनुभाग दिखाता है। Y-अक्ष चुने गए माप के अनुसार आवृत्ति दिखाता है। किसी बिंदु पर माउस ले जाने से उसका मान दिखाई देता है। लेजेंड पर क्लिक करके किसी शब्द की लाइन छिपा/दिखा सकते हैं।",
+  whatDemo:"यह डेमो क्या करता है?", limitations:"महत्वपूर्ण सीमा", footer:"शैक्षणिक प्रस्तुति हेतु बनाया गया डेमो · Voyant Tools से प्रेरित, स्वतंत्र कार्यान्वयन",
+  sectionLabel:"अनुभाग", yRelative:"प्रति 1,000 शब्द", yRaw:"शब्दों की गिनती",
+  needText:"कृपया पहले टेक्स्ट पेस्ट करें या कोई फ़ाइल अपलोड करें।", analysisDone:"विश्लेषण सफलतापूर्वक पूरा हुआ।",
+  fileReading:"फ़ाइल पढ़ी जा रही है…", extracted:"फ़ाइल से टेक्स्ट निकाल लिया गया और विश्लेषण तैयार है।",
+  oneWord:"कृपया एक शब्द दर्ज करें।", duplicate:"यह शब्द पहले से चुना गया है।", added:"ट्रैकिंग सूची में जोड़ा गया।",
+  suggested:"पाठ से बार-बार आने वाले कुछ शब्द जोड़े गए।", demoLoaded:"डेमो पाठ फिर से लोड हो गया।",
+  statusDemo:"● उदाहरण डेटा लोड है", statusReady:"● विश्लेषण तैयार"
+ },
+ en: {
+  brand:"Voyant Trends", brandSub:"Visual analysis of word frequency in text",
+  heroTitle:"Explore changing word patterns", heroSub:"Paste text or upload a file, choose terms, and explore their trends across sections.",
+  step1:"STEP 1 · INPUT", enterText:"Enter text", textPlaceholder:"Paste your research paper or any text here...",
+  uploadLabel:"Or upload a file", fileHint:"Supported files: TXT, PDF and DOCX. PDFs need selectable text; scanned PDFs may require OCR.",
+  analyze:"Analyze text", step2:"STEP 2 · SELECT TERMS", trackTerms:"Terms to track", termPlaceholder:"e.g. privacy", add:"Add",
+  suggest:"Suggest key terms", reset:"Reset demo", metricLabel:"Chart metric",
+  relativeMetric:"Normalized frequency (per 1,000 words)", rawMetric:"Total occurrences (raw count)",
+  results:"RESULTS · TRENDS", chartTitle:"Word frequency by section", csv:"Export chart data CSV",
+  howRead:"How to read the chart?", howReadText:"The X-axis shows document sections. The Y-axis shows frequency using the selected metric. Hover over a point to see its value. Click a legend item to hide or show a term's line.",
+  whatDemo:"What does this demo do?", limitations:"Important limitations", footer:"Academic demonstration · Independent prototype inspired by Voyant Tools",
+  sectionLabel:"Section", yRelative:"Per 1,000 words", yRaw:"Word count",
+  needText:"Please paste text or upload a file first.", analysisDone:"Analysis completed successfully.",
+  fileReading:"Reading file…", extracted:"Text extracted from the file; analysis is ready.",
+  oneWord:"Please enter a single word.", duplicate:"That term is already selected.", added:" added to the tracking list.",
+  suggested:"Frequent terms from the text have been added.", demoLoaded:"Demo text has been reloaded.",
+  statusDemo:"● Example data loaded", statusReady:"● Analysis ready"
+ }
+};
+let uiLanguage = "hi";
+function applyUiLanguage(lang) {
+ uiLanguage = lang;
+ const d = UI_TRANSLATIONS[lang];
+ document.documentElement.lang = lang;
+ document.querySelectorAll("[data-i18n]").forEach(el => {
+   const k = el.getAttribute("data-i18n");
+   if (d[k]) el.textContent = d[k];
+ });
+ document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+   const k = el.getAttribute("data-i18n-placeholder");
+   if (d[k]) el.placeholder = d[k];
+ });
+ $("languageToggle").setAttribute("aria-checked", lang === "en" ? "true" : "false");
+ $("langLabelHi").classList.toggle("active", lang === "hi");
+ $("langLabelEn").classList.toggle("active", lang === "en");
+ if (chart) {
+   chart.data.labels = currentSections.map((_, i) => `${d.sectionLabel} ${i+1}`);
+   chart.options.scales.x.title.text = lang === "hi" ? "दस्तावेज़ के अनुभाग" : "Document sections";
+   chart.options.scales.y.title.text = $("metricSelect").value === "raw" ? d.yRaw : d.yRelative;
+   chart.update();
+ }
+ const f = $("fileInput").files[0];
+ $("chartSubtitle").textContent = `${f ? f.name : (lang === "hi" ? "पाठ विश्लेषण" : "Text analysis")} · ${currentSections.length} ${lang === "hi" ? "अनुभाग" : "sections"}`;
+ $("statusBadge").textContent = (currentText === demoText) ? d.statusDemo : d.statusReady;
+}
+$("languageToggle").addEventListener("click", () => applyUiLanguage(uiLanguage === "hi" ? "en" : "hi"));
+
+$('sourceText').value=demoText;calculate();applyUiLanguage('hi');
+</script>
+</body></html>
